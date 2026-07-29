@@ -39,7 +39,11 @@ async def main():
     asyncio.create_task(notif(bot))
     
     print("Bot start polling")
-    await dp.start_polling(bot)
+    await asyncio.gather(
+        dp.start_polling(bot),      
+        run_web_server()           
+    )
+    
 
 try:
     if __name__ == "__main__":
