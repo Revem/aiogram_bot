@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 import aiosqlite
 import asyncio
 
+
 router = Router()
 
 subcr= set()
@@ -19,6 +20,14 @@ async def notif(bot: Bot):
                 except:
                     pass
         await asyncio.sleep(10)
+
+async def add(message):
+    async with aiosqlite.connect("tgbase.sql") as bd:
+        cur = await bd.cursor()
+        await cur.execute("SELECT * FROM tgbase")
+        result = await cur.fetchall()
+        for pr in result:
+            await message.answer(str(pr)[1:-1])
 
 @router.message(Command("start"))
 async def start(message: Message):
@@ -45,4 +54,8 @@ async def pup(message: Message):
     for u in subcr:
         text+=f"{u}\n"
     await message.answer(text)
-    
+
+@router.message(Command("base"))
+async def base(message: Message):
+    asyncio.create_task(add(message))
+    await message.answer("ready")
